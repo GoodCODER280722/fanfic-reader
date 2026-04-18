@@ -103,6 +103,21 @@ useEffect(() => {
 
 
 if (!user) {
+  const buttonStyle = {
+    width: "100%",
+    padding: "10px",
+    marginBottom: "10px",
+    borderRadius: "6px",
+    border: "none",
+    background: "#3b82f6",
+    color: "white",
+    fontWeight: "bold",
+    cursor: "pointer"
+  };
+  const buttonStyleSecondary = {
+   ...buttonStyle,
+    background: "#64748b"
+  };
   return (
     <div style={{ padding: "20px" }}>
       <h2>Login / Signup</h2>
@@ -113,20 +128,45 @@ if (!user) {
 
 
       <input
-        type="email"
         placeholder="Email"
+        value={email}
         onChange={(e) => setEmail(e.target.value)}
+        style={{
+          width: "100%",
+          padding: "10px",
+          marginBottom: "10px",
+          borderRadius: "6px",
+          border: "1px solid #334155",
+          background: "#0f172a",
+          color: "white"
+        }}
       />
 
       <input
         type="password"
         placeholder="Password"
+        value={password}
         onChange={(e) => setPassword(e.target.value)}
+        style={{
+          width: "100%",
+          padding: "10px",
+          marginBottom: "15px",
+          borderRadius: "6px",
+          border: "1px solid #334155",
+          background: "#0f172a",
+          color: "white"
+        }}
       />
-
-      <button onClick={handleSignUp}>Sign Up</button>
-      <button onClick={handleLogin}>Login</button>
-      <button onClick={handleLogout}>
+      <h1 style={{ 
+        textAlign: "center",
+        marginBottom: "20px",
+        fontSize: "24px"
+      }}>
+        📚 LexaRead
+        </h1>
+      <button onClick={handleSignUp} style={buttonStyle}>Sign Up</button>
+      <button onClick={handleLogin} style={buttonStyle}>Login</button>
+      <button onClick={handleLogout} style={buttonStyleSecondary}>
         Logout
       </button>
     </div>
@@ -342,6 +382,25 @@ setLibrary(Object.values(storiesMap));
 return (
   <>
     {/* HEADER */}
+    <div style={{
+      minHeight: "100vh",
+      background: "#0f172a",
+      color: "e2e8f0",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }}>
+      <div style={{ 
+        width: "100px",
+        maxWidth: "500px",
+        padding: "2rem",
+        background: "#1e293b",
+        borderRadius: "12px",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+      }}>
+      </div>
+    </div>
+
     <div
       style={{
         position: "sticky",
