@@ -114,65 +114,65 @@ if (!user) {
     fontWeight: "bold",
     cursor: "pointer"
   };
+
   const buttonStyleSecondary = {
-   ...buttonStyle,
+    ...buttonStyle,
     background: "#64748b"
   };
+
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Login / Signup</h2>
-
-  {authError && (
-    <div style={{ color: "red" }}>{authError}</div>
-  )}  
-
-
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "10px",
-          marginBottom: "10px",
-          borderRadius: "6px",
-          border: "1px solid #334155",
-          background: "#0f172a",
-          color: "white"
-        }}
-      />
-
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "10px",
-          marginBottom: "15px",
-          borderRadius: "6px",
-          border: "1px solid #334155",
-          background: "#0f172a",
-          color: "white"
-        }}
-      />
-      <h1 style={{ 
-        textAlign: "center",
-        marginBottom: "20px",
-        fontSize: "24px"
+    <div style={{
+      minHeight: "100vh",
+      background: "#0f172a",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      color: "white"
+    }}>
+      <div style={{
+        width: "100%",
+        maxWidth: "400px",
+        padding: "30px",
+        background: "#1e293b",
+        borderRadius: "12px",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.5)"
       }}>
-        📚 LexaRead
-        </h1>
-      <button onClick={handleSignUp} style={buttonStyle}>Sign Up</button>
-      <button onClick={handleLogin} style={buttonStyle}>Login</button>
-      <button onClick={handleLogout} style={buttonStyleSecondary}>
-        Logout
-      </button>
+        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+          📚 LexaRead
+        </h2>
+
+        {authError && (
+          <div style={{ color: "red", marginBottom: "10px" }}>
+            {authError}
+          </div>
+        )}
+
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={{ width: "100%", marginBottom: "10px", padding: "10px" }}
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ width: "100%", marginBottom: "15px", padding: "10px" }}
+        />
+
+        <button onClick={handleSignUp} style={buttonStyle}>
+          Sign Up
+        </button>
+
+        <button onClick={handleLogin} style={buttonStyle}>
+          Login
+        </button>
+      </div>
     </div>
   );
 }
-
 const loadLibraryFromCloud = async () => {
   const { data, error } = await supabase.storage
     .from("stories")
