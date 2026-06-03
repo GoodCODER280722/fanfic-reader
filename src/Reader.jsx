@@ -24,13 +24,23 @@ const chapter = story.chapters[safeIndex];
 
   const [direction, setDirection] = useState(null);
 
-  useEffect(() => {
-   if (!story) return;
+ useEffect(() => {
+  if (!story) return;
 
-    story.progress = chapterIndex;
- },  [chapterIndex]);
+const key = `progress-${story.title}`;
+localStorage.setItem(key, chapterIndex);
+}, [chapterIndex, story]);
 
- <div>No story loaded</div>;
+useEffect(() => {
+  if (!story);
+
+  const key = `progress-${story.title}`;
+  const savedIndex = localStorage.getItem(key);
+
+  if (savedIndex !== null) {
+    setChapterIndex(Number(saved))
+  }
+} , [story]);
 
 const next = () => {
   setDirection("next");
@@ -66,78 +76,85 @@ const prev = () => {
     const screenWidth = window.innerWidth;
     const clickX = e.clientX;
 
-    if (clickX < screenWidth * 0.3) {
+    const leftZone = screenWidth * 0.25;
+    const rightZone = screenWidth * 0.75;
+
+    if (clickX < leftZone) {
       prev();
-    } else if (clickX > screenWidth * 0.7) {
+    } else if (clickX > rightZone) {
       next();
     } else {
       setUiVisible((prev) => !prev);
     }
   };
 
-  return (
+return (
+  <div
+    onClick={handleClick}
+    style={{
+      minHeight: "100vh",
+      background: "#0f172a",
+      cursor: "pointer"
+    }}
+  >
     <div
-      onClick={handleClick}
+      key={chapterIndex}
       style={{
-        padding: "20px",
-        minHeight: "100vh",
-        cursor: "pointer",
-        overflow: "hidden"
+        maxWidth: "720px",
+        margin: "0 auto",
+        padding: "60px 20px",
+        lineHeight: "1.8",
+        fontSize: "18px",
+        color: "#e5e7eb",
+
+        transform:
+          direction === "next"
+            ? "translateX(40px)"
+            : direction === "prev"
+            ? "translateX(-40px)"
+            : "translateX(0)",
+        opacity: direction ? 0 : 1,
+        filter : direction ? "blur(4px)" : "blur(0px)",
+
+        transition: "all 0.3s ease",
       }}
     >
-      {/* Title */}
-      <h2 style={{ textAlign: "center" }}>{story.title}</h2>
+     {uiVisible && (
+  <>
+    <h1 style={{
+      fontSize: "28px",
+      marginBottom: "10px",
+      fontWeight: "600"
+    }}>
+      {story.title}
+    </h1>
 
-      {/* Chapter */}
-      <div
-        style={{
-          textAlign: "center",
-          marginBottom: "20px",
-          color: "#aaa"
-        }}
-      >
-        Chapter {chapterIndex + 1} / {story.chapters.length}
-      </div>
-
-      {/* Animated Content */}
-      <div
-        key={chapterIndex}
-        style={{
-          maxWidth: "700px",
-          margin: "0 auto",
-          lineHeight: "1.7",
-          fontSize: "18px",
-          textAlign: "justify",
-
-          transform:
-            direction === "next"
-              ? "translateX(20px)"
-              : direction === "prev"
-              ? "translateX(-20px)"
-              : "translateX(0)",
-
-          opacity: direction ? 0 : 1,
-          transition: "all 0.2s ease"
-        }}
-        dangerouslySetInnerHTML={{
-          __html: story.chapters[chapterIndex].content
-        }}
-      />
-
-      {/* Buttons */}
-      <div
-        style={{
-          marginTop: "30px",
-          display: "flex",
-          justifyContent: "space-between",
-          maxWidth: "700px",
-          marginLeft: "auto",
-          marginRight: "auto"
-        }}
-      >
-        <button onClick={prev}>← Prev</button>
-        <button onClick={next}>Next →</button>
-      </div>
+    <div style={{
+      fontSize: "14px",
+      color: "#9ca3af",
+      marginBottom: "30px"
+    }}>
+      Chapter {chapterIndex + 1}
     </div>
-  );
+  </>
+)}
+      <div
+        dangerouslySetInnerHTML={{
+          __html: chapter.content || "<p>Loading...</p>"
+        }}
+      />  
+
+{uiVisible && (
+  <div style={{
+    marginTop: "30px",
+    display: "flex",
+    justifyContent: "space-between",
+  }}>
+    <button onClick={prev}>← Prev</button>
+    <button onClick={next}>Next →</button>
+  </div>
+)} 
+    </div>
+  </div>
+);
 }

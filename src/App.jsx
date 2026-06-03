@@ -18,6 +18,27 @@ export default function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
+  const [message, setMessage] = useState("");
+
+const handleResetPassword = async () => {
+  console.log("Resetting password for:", email);
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + "/reset-password",
+  });
+
+  if (error) {
+    console.error("Password reset error:", error.message);
+  } else {
+    setMessage("Password reset email sent! Check your inbox.");
+  }
+};
+
+{authError && (
+  <div style={{ color: "red", marginBottom: "10px" }}>
+    {authError}
+  </div>
+)}
+
 
 const handleSignUp = async () => {
   console.log("SIGN UP CLICKED");
@@ -38,6 +59,11 @@ const handleSignUp = async () => {
   setAuthError("");
 };
 
+{message && (
+  <div style={{ color: "lightgreen", marginBottom: "10px" }}>
+    {message}
+  </div>
+)}
 const handleLogin = async () => {
   console.log("LOGIN CLICKED");
 
@@ -101,6 +127,23 @@ useEffect(() => {
   }
 }, [user]);
 
+useEffect(() => {
+  // Get existing session on load
+  supabase.auth.getSession().then(({ data }) => {
+    setUser(data.session?.user ?? null);
+  });
+
+  // Listen for login/logout changes
+  const { data: listener } = supabase.auth.onAuthStateChange(
+    (_event, session) => {
+      setUser(session?.user ?? null);
+    }
+  );
+
+  return () => {
+    listener.subscription.unsubscribe();
+  };
+}, []);
 
 if (!user) {
   const buttonStyle = {
@@ -168,6 +211,10 @@ if (!user) {
 
         <button onClick={handleLogin} style={buttonStyle}>
           Login
+        </button>
+
+        <button onClick={handleResetPassword} style={buttonStyle}>
+          Reset Password
         </button>
       </div>
     </div>
@@ -306,7 +353,7 @@ setLibrary(Object.values(storiesMap));
       const existingIndex = prevLibrary.findIndex(
         (s) => s.title === storyName
       );
-
+        
       // 🆕 NEW STORY
       if (existingIndex === -1) {
         const newStory = {
@@ -381,6 +428,83 @@ setLibrary(Object.values(storiesMap));
 
 return (
   <>
+ {view === "upload" && (
+  <div style={{
+    minHeight: "100vh",
+    background: "#0f172a",
+    color: "e2e8f0",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  }}>
+    <div style={{
+      width: "100%",
+      maxWidth: "500px",
+      padding: "2rem",
+      background: "#1e293b",
+      borderRadius: "12px",
+      boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+      textAlign: "center"
+    }}>
+      <h2>Add a Story</h2>
+
+      <p style={{ color: "#aaa", marginBottom: "20px" }}>
+        Upload a .docx file to add it to your library.
+      </p>
+
+      <input
+        type="file"
+        accept=".docx"
+        onChange={handleFileUpload}
+        style={{ marginBottom: "20px" }}
+      />
+
+      <br />
+
+      <button onClick={() => setView("library")}>
+          ← Back
+      </button>
+    </div>
+  </div>
+ )}
+ 
+  {/* Empty state */}
+  {library.length === 0 && (
+    <div style={{
+      color: "#ccc",
+      textAlign: "center",
+      marginTop: "100px",
+      fontsize: "18px"
+    }}>
+      <h2 style={{ marginBottom: "10px" }}>
+        📂 Your library is empty
+        </h2>
+
+        <p style={{ marginBottom: "20px", color: "#888" }}>
+          Add a story to get started.
+        </p>
+
+        <button
+          onClick={() => setView("upload")}
+          style={{
+            padding: "12px 20px",
+            fontSize: "16px",
+            borderRadius: "6px",
+            border: "none",
+            background: "#3b82f6",
+            color: "white",
+            cursor: "pointer",
+            transition: "0.2s"
+          }}
+          onMouseOver={(e) => e.currentTarget.style.background = "#2563eb"}
+          onMouseOut={(e) => e.currentTarget.style.background = "#3b82f6"}
+        >
+          + Add Story
+        </button>
+    </div>
+  )}
+    
+
     {/* HEADER */}
     <div style={{
       minHeight: "100vh",
